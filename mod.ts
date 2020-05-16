@@ -10,11 +10,14 @@ class CasualDB<Schema> {
     this.filePath = '';
   }
 
-  private async read(): Promise<Schema> {
+  private checkConnection() {
     if (!this.filePath) {
-      throw new Error('DB connection not set. Cannot read.');
+      throw new Error("DB connection not set. Cannot read.");
     }
+  }
 
+  private async read(): Promise<Schema> {
+    this.checkConnection();
     return readJson(this.filePath) as Promise<Schema>
   }
 
@@ -33,42 +36,71 @@ class CasualDB<Schema> {
     }
   }
 
-  async get<T>(path: string) {
-    try {
-      const data = await this.read();
-      const value = get(data, path, null);
-      return value;
-    } catch(err) {
-      throw err;
-    }
+  async get<T>(path: string): Promise<T> {
+    this.checkConnection();
+
+    const data = await this.read();
+    const value = get(data, path, null);
+    return value as T;
   }
 
   async seed(data: Schema) {
-    if (this.filePath) {
-      return writeJson(this.filePath, data);
-    }
+    this.checkConnection();
+
+    return writeJson(this.filePath, data);
   }
 
   async write<T>(path: string, value: T) {
-    if (this.filePath) {
-      const data = await this.read();
-      return writeJson(this.filePath, set(data, path, value));
-    }
+    this.checkConnection();
+
+    const data = await this.read();
+    return writeJson(this.filePath, set(data, path, value));
   }
 
   async update<T>(
     path: string,
     updateMethod: (currentValue: T) => T
   ) {
-    if (this.filePath) {
-      const data = await this.get<T>(path);
-      return this.write<T>(path, updateMethod(data));
+    this.checkConnection();
+
+    const data = await this.get<T>(path);
+    return this.write<T>(path, updateMethod(data));
+  }
+
+  async count(path: string): Promise<number | null> {
+    this.checkConnection();
+
+    const data = await this.get(path);
+
+    if (!Array.isArray(data)) {
+      return null;
     }
+
+    return data.length;
+  }
+
+  async findById<T>(path: string, id: string): Promise<T | null> {
+    this.checkConnection();
+
+    const data = await this.get(path);
+
+    if (!Array.isArray(data)) {
+      return null;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].id == id) {
+        return data[i] as T;
+      }
+    }
+
+    return null;
   }
 }
 
 interface Schema {
   posts: Array<{
+    id: number,
     title: string;
   }>;
   user: {
@@ -81,8 +113,10 @@ const test = new CasualDB<Schema>();
 await test.connect('./test-db.json');
 await test.seed({
   posts: [{
+    id: 1,
     title: 'Post 1',
   }, {
+    id: 2,
     title: 'Post 2',
   }],
   user: {
@@ -98,3 +132,6 @@ console.log("update", await test.update<number>("user.age", (value) => {
   return value + 1;
 }));
 console.log("get", await test.get("user.age"));
+console.log("count", await test.count("posts"));
+console.log("findById", await test.findById("posts", "2"));
+console.log("findById", await test.findById("users", "2"));
