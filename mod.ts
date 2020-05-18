@@ -5,9 +5,11 @@ import { writeJson } from 'https://deno.land/std/fs/write_json.ts';
 
 class CasualDB<Schema> {
   private filePath: string;
+  private data: Schema;
 
   constructor() {
     this.filePath = '';
+    this.data = {} as Schema;
   }
 
   private checkConnection() {
@@ -26,6 +28,7 @@ class CasualDB<Schema> {
       const fileInfo = await Deno.stat(fsPath);
       if (!fileInfo.isFile) throw new Error('Not a file');
       this.filePath = fsPath;
+      this.read();
     } catch (err) {
       if (err instanceof Error && err.toString().startsWith('NotFound') && !bailIfNotPresent) {
         await writeJson(fsPath, {});
@@ -39,7 +42,7 @@ class CasualDB<Schema> {
   async get<T>(path: string): Promise<T> {
     this.checkConnection();
 
-    const data = await this.read();
+    const data = this.data;
     const value = get(data, path, null);
     return value as T;
   }
@@ -47,14 +50,23 @@ class CasualDB<Schema> {
   async seed(data: Schema) {
     this.checkConnection();
 
-    return writeJson(this.filePath, data);
+    this.data = data;
+
+    const worker = new Worker("./writeWorker.ts", { type: "module", deno: true });
+    worker.postMessage({
+      file: this.filePath,
+      data,
+    });
   }
 
   async write<T>(path: string, value: T) {
     this.checkConnection();
-
-    const data = await this.read();
-    return writeJson(this.filePath, set(data, path, value));
+    const data = this.data;
+    const worker = new Worker("./writeWorker.ts", { type: "module", deno: true });
+    worker.postMessage({
+      file: this.filePath,
+      data: set(data, path, value),
+    });
   }
 
   async update<T>(
