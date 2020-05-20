@@ -1,14 +1,18 @@
-import get from 'https://deno.land/x/lodash/get.js';
-import set from 'https://deno.land/x/lodash/set.js';
-import { readJson } from 'https://deno.land/std/fs/read_json.ts';
-import { writeJson } from 'https://deno.land/std/fs/write_json.ts';
+import get from "https://deno.land/x/lodash/get.js";
+import set from "https://deno.land/x/lodash/set.js";
+import { readJson } from "https://deno.land/std/fs/read_json.ts";
+import { writeJson } from "https://deno.land/std/fs/write_json.ts";
+
+interface ConnectOptions {
+  bailIfNotPresent?: boolean;
+}
 
 class CasualDB<Schema> {
   private filePath: string;
   private data: Schema;
 
   constructor() {
-    this.filePath = '';
+    this.filePath = "";
     this.data = {} as Schema;
   }
 
@@ -20,17 +24,26 @@ class CasualDB<Schema> {
 
   private async read(): Promise<Schema> {
     this.checkConnection();
-    return readJson(this.filePath) as Promise<Schema>
+    const data = await readJson(this.filePath);
+
+    return data as Schema;
   }
 
-  async connect(fsPath: string, bailIfNotPresent?: boolean): Promise<void> {
+  async connect(fsPath: string, options?: ConnectOptions): Promise<void> {
     try {
       const fileInfo = await Deno.stat(fsPath);
-      if (!fileInfo.isFile) throw new Error('Not a file');
+
+      if (!fileInfo.isFile) {
+        throw new Error("Not a file");
+      }
+
       this.filePath = fsPath;
       this.read();
     } catch (err) {
-      if (err instanceof Error && err.toString().startsWith('NotFound') && !bailIfNotPresent) {
+      if (
+        err instanceof Error && err.toString().startsWith("NotFound") &&
+        !options?.bailIfNotPresent
+      ) {
         await writeJson(fsPath, {});
         this.filePath = fsPath;
         return;
@@ -52,7 +65,10 @@ class CasualDB<Schema> {
 
     this.data = data;
 
-    const worker = new Worker("./writeWorker.ts", { type: "module", deno: true });
+    const worker = new Worker(
+      "./writeWorker.ts",
+      { type: "module", deno: true },
+    );
     worker.postMessage({
       file: this.filePath,
       data,
@@ -62,7 +78,10 @@ class CasualDB<Schema> {
   async write<T>(path: string, value: T) {
     this.checkConnection();
     const data = this.data;
-    const worker = new Worker("./writeWorker.ts", { type: "module", deno: true });
+    const worker = new Worker(
+      "./writeWorker.ts",
+      { type: "module", deno: true },
+    );
     worker.postMessage({
       file: this.filePath,
       data: set(data, path, value),
@@ -71,7 +90,7 @@ class CasualDB<Schema> {
 
   async update<T>(
     path: string,
-    updateMethod: (currentValue: T) => T
+    updateMethod: (currentValue: T) => T,
   ) {
     this.checkConnection();
 
@@ -112,37 +131,40 @@ class CasualDB<Schema> {
 
 interface Schema {
   posts: Array<{
-    id: number,
+    id: number;
     title: string;
   }>;
   user: {
     name: string;
     age: number;
-  }
+  };
 }
 
 const test = new CasualDB<Schema>();
-await test.connect('./test-db.json');
+await test.connect("./test-db.json");
 await test.seed({
   posts: [{
     id: 1,
-    title: 'Post 1',
+    title: "Post 1",
   }, {
     id: 2,
-    title: 'Post 2',
+    title: "Post 2",
   }],
   user: {
-    name: 'Camp Vanilla',
+    name: "Camp Vanilla",
     age: 5,
   },
 });
-console.log('get', await test.get('posts[1]'));
-console.log("write", await test.write('user.name', 'Camp Vanilla 123'));
-console.log('get', await test.get('user.name'));
-console.log("update", await test.update<number>("user.age", (value) => {
-  console.log("Previous value", value);
-  return value + 1;
-}));
+console.log("get", await test.get("posts[1]"));
+console.log("write", await test.write("user.name", "Camp Vanilla 123"));
+console.log("get", await test.get("user.name"));
+console.log(
+  "update",
+  await test.update<number>("user.age", (value) => {
+    console.log("Previous value", value);
+    return value + 1;
+  }),
+);
 console.log("get", await test.get("user.age"));
 console.log("count", await test.count("posts"));
 console.log("findById", await test.findById("posts", "2"));
