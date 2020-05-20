@@ -9,11 +9,9 @@ interface ConnectOptions {
 
 class CasualDB<Schema> {
   private filePath: string;
-  private data: Schema;
 
   constructor() {
     this.filePath = "";
-    this.data = {} as Schema;
   }
 
   private checkConnection() {
@@ -55,15 +53,13 @@ class CasualDB<Schema> {
   async get<T>(path: string): Promise<T> {
     this.checkConnection();
 
-    const data = this.data;
+    const data = await this.read();
     const value = get(data, path, null);
     return value as T;
   }
 
   async seed(data: Schema) {
     this.checkConnection();
-
-    this.data = data;
 
     const worker = new Worker(
       "./writeWorker.ts",
@@ -77,7 +73,7 @@ class CasualDB<Schema> {
 
   async write<T>(path: string, value: T) {
     this.checkConnection();
-    const data = this.data;
+    const data = await this.read();
     const worker = new Worker(
       "./writeWorker.ts",
       { type: "module", deno: true },
