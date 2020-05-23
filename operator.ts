@@ -59,13 +59,9 @@ class CollectionOperator<Op> extends BaseOperator<Op[]> {
   }
 
   findAll(predicate: Predicate<Op>): CollectionOperator<Op> {
-    if (typeof predicate === 'function') {
-      return new CollectionOperator(this.data.filter(predicate));
-    } else {
-      return new CollectionOperator(
-        matches(this.data)(predicate) || null
-      );
-    }
+    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
+
+    return new CollectionOperator(this.data.filter(predicateFunction));
   }
 
   findAllAndUpdate<T = Op>(

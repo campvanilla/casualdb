@@ -67,12 +67,7 @@ await test.seed({
 });
 
 const data = await test.get<Schema["posts"]>("posts");
-const updateData = data.findAndUpdate({ id: 1 }, (value) => {
-  return {
-    ...value,
-    title: 'modified post',
-  }
-});
+const updateData = data.findById(2);
 
 console.log(updateData.value());
 // await test.write(
