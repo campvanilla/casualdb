@@ -32,14 +32,11 @@ class CollectionOperator<Op> extends PrimitiveOperator<Op[]> {
     return this.data.length;
   }
 
-  find(predicate: Predicate<Op>) {
-    if (typeof predicate === 'function') {
-      return new PrimitiveOperator(this.data.find(predicate));
-    } else {
-      return new PrimitiveOperator(
-        matches(this.data)(predicate)[0] || null
-      );
-    }
+  findOne<T = Op>(predicate: Predicate<Partial<T>>): PrimitiveOperator<Op | null> {
+    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
+
+    const found = this.data.find(i => predicateFunction(i));
+    return new PrimitiveOperator(found || null);
   }
 
   push(data: Op) {
@@ -56,8 +53,8 @@ class CollectionOperator<Op> extends PrimitiveOperator<Op[]> {
     }
   }
 
-  findAndUpdate(
-    predicate: Predicate<Partial<Op>>,
+  findAllAndUpdate<T = Op>(
+    predicate: Predicate<Partial<T>>,
     updateMethod: (value: Op) => Op
   ): CollectionOperator<Op> {
     const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
@@ -71,11 +68,23 @@ class CollectionOperator<Op> extends PrimitiveOperator<Op[]> {
     }));
   }
 
-  findAndRemove(
-    predicate: Predicate<Partial<Op>>,
+  findAllAndRemove<T = Op>(
+    predicate: Predicate<Partial<T>>,
   ): CollectionOperator<Op> {
     const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
     return new CollectionOperator(this.data.filter((value: Op) => !predicateFunction(value)));
+  }
+
+  findById(id: string | number) {
+    return this.findOne<{ id?: string | number }>({ id });
+  }
+
+  findByIdAndRemove(id: string | number) {
+    return this.findAllAndRemove<{ id?: string | number }>({ id });
+  }
+
+  findByIdAndUpdate(id: string | number, updateMethod: (value: Op) => Op) {
+    return this.findAllAndUpdate<{ id?: string | number }>({ id }, updateMethod);
   }
 }
 
