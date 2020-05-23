@@ -1,8 +1,8 @@
 import { Predicate, PredicateFunction } from "./types.ts";
 import matches from "https://deno.land/x/lodash/matches.js";
 
-class Operator<Op> {
-  private data: Op;
+class PrimitiveOperator<Op> {
+  protected data: Op;
 
   constructor(data: Op) {
     this.data = data;
@@ -10,6 +10,18 @@ class Operator<Op> {
 
   value() {
     return this.data;
+  }
+
+  update<T = Op>(
+    updateMethod: (currentValue: Op) => T,
+  ): PrimitiveOperator<ReturnType<typeof updateMethod>> {
+    return new PrimitiveOperator<ReturnType<typeof updateMethod>>(updateMethod(this.data));
+  }
+}
+
+class CollectionOperator<Op> extends PrimitiveOperator<Op[]> {
+  constructor(data: Op[]) {
+    super(data);
   }
 
   size(): number | null {
@@ -20,66 +32,54 @@ class Operator<Op> {
     return this.data.length;
   }
 
-  update<T = Op>(
-    updateMethod: (currentValue: Op) => T,
-  ): Operator<ReturnType<typeof updateMethod>> {
-    return new Operator<ReturnType<typeof updateMethod>>(updateMethod(this.data));
-  }
-
   find(predicate: Predicate<Op>) {
-    if (Array.isArray(this.data)) {
-      if (typeof predicate === 'function') {
-        return new Operator(this.data.find(predicate));
-      } else {
-        return new Operator(
-          matches(this.data)(predicate)[0] || null
-        );
-      }
+    if (typeof predicate === 'function') {
+      return new PrimitiveOperator(this.data.find(predicate));
+    } else {
+      return new PrimitiveOperator(
+        matches(this.data)(predicate)[0] || null
+      );
     }
-    
-    throw new Error("[CasualDB] Not an array.");
   }
 
-  push(data: Op extends (infer U)[] ? U : Op) {
-    if (Array.isArray(this.data)) {
-      return new Operator([...this.data, data]);
-    }
-
-    throw new Error('[CasualDB] Not an array.');
+  push(data: Op) {
+    return new CollectionOperator([...this.data, data]);
   }
 
-  findAll(predicate: Predicate<Op extends (infer U)[] ? U : Op>): Operator<Array<Op extends (infer U)[] ? U : Op>> {
-    if (Array.isArray(this.data)) {
-      if (typeof predicate === 'function') {
-        return new Operator(this.data.filter(predicate));
-      } else {
-        return new Operator(
-          matches(this.data)(predicate) || null
-        );
-      }
+  findAll(predicate: Predicate<Op>): PrimitiveOperator<Array<Op>> {
+    if (typeof predicate === 'function') {
+      return new CollectionOperator(this.data.filter(predicate));
+    } else {
+      return new CollectionOperator(
+        matches(this.data)(predicate) || null
+      );
     }
-
-    throw new Error("[CasualDB] Not an array.");
   }
 
-  findAndUpdate<T = Op extends (infer U)[] ? U : Op, K = Op extends (infer U)[] ? U : Op>(
-    predicate: Predicate<Partial<T>>,
-    updateMethod: (value: K) => K
-  ): Operator<K[]> {
+  findAndUpdate(
+    predicate: Predicate<Partial<Op>>,
+    updateMethod: (value: Op) => Op
+  ): CollectionOperator<Op> {
     const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
     
-    if (Array.isArray(this.data)) {
-      return new Operator(this.data.map((value: K) => {
-        if (predicateFunction(value)) {
-          return updateMethod(value);
-        }
+    return new CollectionOperator(this.data.map((value: Op) => {
+      if (predicateFunction(value)) {
+        return updateMethod(value);
+      }
 
-        return value;
-      }));
-    }
+      return value;
+    }));
+  }
 
-    throw new Error("[CasualDB] Not an array.");
+  findAndRemove(
+    predicate: Predicate<Partial<Op>>,
+  ): CollectionOperator<Op> {
+    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
+    return new CollectionOperator(this.data.filter((value: Op) => !predicateFunction(value)));
   }
 }
 
-export default Operator;
+export {
+  PrimitiveOperator,
+  CollectionOperator
+};
