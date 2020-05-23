@@ -20,12 +20,9 @@ class Operator<Op> {
     return this.data.length;
   }
 
-  update(
-    updateMethod: (currentValue: Op) => any,
-  ): Operator<ReturnType<typeof updateMethod>> | Operator<Array<ReturnType<typeof updateMethod>>> {
-    if (Array.isArray(this.data)) {
-      return new Operator<Array<ReturnType<typeof updateMethod>>>(this.data.map(d => updateMethod(d)));
-    }
+  update<T = Op>(
+    updateMethod: (currentValue: Op) => T,
+  ): Operator<ReturnType<typeof updateMethod>> {
     return new Operator<ReturnType<typeof updateMethod>>(updateMethod(this.data));
   }
 
@@ -51,7 +48,7 @@ class Operator<Op> {
     throw new Error('[CasualDB] Not an array.');
   }
 
-  findAll(predicate: Predicate<Op>): Operator<Array<Op extends (infer U)[] ? U : Op>> {
+  findAll(predicate: Predicate<Op extends (infer U)[] ? U : Op>): Operator<Array<Op extends (infer U)[] ? U : Op>> {
     if (Array.isArray(this.data)) {
       if (typeof predicate === 'function') {
         return new Operator(this.data.filter(predicate));
@@ -60,6 +57,25 @@ class Operator<Op> {
           matches(this.data)(predicate) || null
         );
       }
+    }
+
+    throw new Error("[CasualDB] Not an array.");
+  }
+
+  findAndUpdate<T = Op extends (infer U)[] ? U : Op, K = Op extends (infer U)[] ? U : Op>(
+    predicate: Predicate<Partial<T>>,
+    updateMethod: (value: K) => K
+  ): Operator<K[]> {
+    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
+    
+    if (Array.isArray(this.data)) {
+      return new Operator(this.data.map((value: K) => {
+        if (predicateFunction(value)) {
+          return updateMethod(value);
+        }
+
+        return value;
+      }));
     }
 
     throw new Error("[CasualDB] Not an array.");
