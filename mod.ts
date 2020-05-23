@@ -22,7 +22,7 @@ class CasualDB<Schema, Current = any> {
     this.connector.write('', data);
   }
 
-  async set<T>(path: string, value: T) {
+  async write<T>(path: string, value: T) {
     this.connector.write(path, value);
   }
 }
