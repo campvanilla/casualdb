@@ -1,4 +1,4 @@
-import { Predicate } from "./types.ts";
+import { Predicate, PredicateFunction } from "./types.ts";
 import matches from "https://deno.land/x/lodash/matches.js";
 
 class Operator<Op> {
@@ -22,7 +22,10 @@ class Operator<Op> {
 
   update(
     updateMethod: (currentValue: Op) => any,
-  ) {
+  ): Operator<ReturnType<typeof updateMethod>> | Operator<Array<ReturnType<typeof updateMethod>>> {
+    if (Array.isArray(this.data)) {
+      return new Operator<Array<ReturnType<typeof updateMethod>>>(this.data.map(d => updateMethod(d)));
+    }
     return new Operator<ReturnType<typeof updateMethod>>(updateMethod(this.data));
   }
 
@@ -32,11 +35,12 @@ class Operator<Op> {
         return new Operator(this.data.find(predicate));
       } else {
         return new Operator(
-          matches(this.data, predicate)[0] || null
+          matches(this.data)(predicate)[0] || null
         );
       }
     }
-    return new Operator(null);
+    
+    throw new Error("[CasualDB] Not an array.");
   }
 
   push(data: Op extends (infer U)[] ? U : Op) {
@@ -45,6 +49,20 @@ class Operator<Op> {
     }
 
     throw new Error('[CasualDB] Not an array.');
+  }
+
+  findAll(predicate: Predicate<Op>): Operator<Array<Op extends (infer U)[] ? U : Op>> {
+    if (Array.isArray(this.data)) {
+      if (typeof predicate === 'function') {
+        return new Operator(this.data.filter(predicate));
+      } else {
+        return new Operator(
+          matches(this.data)(predicate) || null
+        );
+      }
+    }
+
+    throw new Error("[CasualDB] Not an array.");
   }
 }
 
