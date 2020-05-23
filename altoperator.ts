@@ -20,13 +20,17 @@ abstract class BaseOperator<Op extends Operand> {
   }
 }
 
-export class Value<Op> extends BaseOperator<Op> {
-  update() {
+export class CasualMap<Op extends CasualInstance | null> extends BaseOperator<Op> {
+  update<T = Op>(data: T) {
+    return new CasualMap(data);
+  }
 
+  isNull(): boolean {
+    return this.data === null;
   }
 }
 
-export class CollectionOperator<Op extends CasualInstance> extends BaseOperator<Op[]>{
+export class CasualCollection<Op extends CasualInstance> extends BaseOperator<Op[]>{
   constructor(data: Op[]) {
     super(data);
   }
@@ -35,10 +39,11 @@ export class CollectionOperator<Op extends CasualInstance> extends BaseOperator<
     return this.data.length;
   }
 
+
   find(predicate: Predicate<Op>) {
     const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
     const found = this.data.find(i => predicateFunction(i));
-    return typeof found === 'undefined' ? new Value(null) : new Value(found);
+    return typeof found === 'undefined' ? new CasualMap(null) : new CasualMap(found);
   }
 
   findById(id: ID) {
@@ -56,7 +61,7 @@ export class CollectionOperator<Op extends CasualInstance> extends BaseOperator<
       }
       return item;
     });
-    return new CollectionOperator(updated);
+    return new CasualCollection(updated);
   }
 
   findByIdAndUpdate(id: ID, updateMethod: (item: Op) => Op) {
@@ -64,6 +69,6 @@ export class CollectionOperator<Op extends CasualInstance> extends BaseOperator<
   }
 
   insert(...items: Op[]) {
-    return new CollectionOperator([...this.value(), ...items]);
+    return new CasualCollection([...this.value(), ...items]);
   }
 }
