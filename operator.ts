@@ -1,10 +1,10 @@
-import { Predicate, ID, Poopy } from "./types.ts";
+import { Predicate } from "./types.ts";
 import matches from "https://deno.land/x/lodash/matches.js";
 
-class Operator<Schema> {
-  private data: Schema;
+class Operator<Op> {
+  private data: Op;
 
-  constructor(data: Schema) {
+  constructor(data: Op) {
     this.data = data;
   }
 
@@ -20,13 +20,13 @@ class Operator<Schema> {
     return this.data.length;
   }
 
-  update<T>(
-    updateMethod: (currentValue: Schema) => T,
+  update(
+    updateMethod: (currentValue: Op) => any,
   ) {
-    return new Operator<T>(updateMethod(this.data));
+    return new Operator<ReturnType<typeof updateMethod>>(updateMethod(this.data));
   }
 
-  find(predicate: Predicate<Schema>) {
+  find(predicate: Predicate<Op>) {
     if (Array.isArray(this.data)) {
       if (typeof predicate === 'function') {
         return new Operator(this.data.find(predicate));
@@ -37,6 +37,14 @@ class Operator<Schema> {
       }
     }
     return new Operator(null);
+  }
+
+  push(data: Op extends (infer U)[] ? U : Op) {
+    if (Array.isArray(this.data)) {
+      return new Operator([...this.data, data]);
+    }
+
+    throw new Error('[CasualDB] Not an array.');
   }
 }
 
