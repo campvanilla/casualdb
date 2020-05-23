@@ -1,7 +1,8 @@
 import { Predicate, PredicateFunction } from "./types.ts";
 import matches from "https://deno.land/x/lodash/matches.js";
 
-class PrimitiveOperator<Op> {
+
+class BaseOperator<Op> {
   protected data: Op;
 
   constructor(data: Op) {
@@ -11,6 +12,16 @@ class PrimitiveOperator<Op> {
   value() {
     return this.data;
   }
+}
+
+class PrimitiveOperator<Op> extends BaseOperator<Op> {
+  constructor(data: Op) {
+    super(data);
+
+    if (Array.isArray(data)) {
+      throw new Error('[CasualDb] PrimitiveOperator; initialized with a value that is an array.');
+    }
+  }
 
   update<T = Op>(
     updateMethod: (currentValue: Op) => T,
@@ -19,9 +30,13 @@ class PrimitiveOperator<Op> {
   }
 }
 
-class CollectionOperator<Op> extends PrimitiveOperator<Op[]> {
+class CollectionOperator<Op> extends BaseOperator<Op[]> {
   constructor(data: Op[]) {
     super(data);
+
+    if (!Array.isArray(data)) {
+      throw new Error('[CasualDb] CollectionOperator initialized with a value that is not an array.');
+    }
   }
 
   size(): number | null {
@@ -43,7 +58,7 @@ class CollectionOperator<Op> extends PrimitiveOperator<Op[]> {
     return new CollectionOperator([...this.data, data]);
   }
 
-  findAll(predicate: Predicate<Op>): PrimitiveOperator<Array<Op>> {
+  findAll(predicate: Predicate<Op>): CollectionOperator<Op> {
     if (typeof predicate === 'function') {
       return new CollectionOperator(this.data.filter(predicate));
     } else {
