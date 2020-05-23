@@ -26,7 +26,7 @@ export class Value<Op> extends BaseOperator<Op> {
   }
 }
 
-export class CollectionOperator<Op> extends BaseOperator<Op[]>{
+export class CollectionOperator<Op extends CasualInstance> extends BaseOperator<Op[]>{
   constructor(data: Op[]) {
     super(data);
   }
@@ -45,10 +45,25 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]>{
     return this.find(matches({ id }));
   }
 
-  update<T>(
-    updateMethod: (item: Op) => T
+  findAndUpdate(
+    predicate: Predicate<Op>,
+    updateMethod: (item: Op) => Op
   ) {
-    const updated = this.data.map<T>(item => updateMethod(item));
+    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
+    const updated = this.data.map(item => {
+      if (predicateFunction(item)) {
+        return updateMethod(item);
+      }
+      return item;
+    });
     return new CollectionOperator(updated);
+  }
+
+  findByIdAndUpdate(id: ID, updateMethod: (item: Op) => Op) {
+    return this.findAndUpdate({ id } as Partial<Op>, updateMethod);
+  }
+
+  insert(...items: Op[]) {
+    return new CollectionOperator([...this.value(), ...items]);
   }
 }
