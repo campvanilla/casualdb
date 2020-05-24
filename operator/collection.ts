@@ -14,11 +14,24 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
     }
   }
 
+  /**
+   * Get the size (length) of the collection.
+   */
   size(): number {
     return this.data.length;
   }
 
-  findOne<T = Op>(predicate: Predicate<Partial<T>>): PrimitiveOperator<Op | null> {
+  /**
+   * Find & return one element from the collection
+   */
+  findOne<T = Op>(
+    /** the predicate must be either:
+     * - a function which returns true when the desired item from the collection is "found".
+     * - Pass an object which will be deep-compared with each item in the collection until a match is "found";
+     *   using `_.matches` from lodash as the function.
+     */
+    predicate: Predicate<Partial<T>>
+  ): PrimitiveOperator<Op | null> {
     const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
 
     const found = this.data.find(i => predicateFunction(i));
