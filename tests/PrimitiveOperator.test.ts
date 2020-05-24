@@ -1,7 +1,7 @@
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 import { PrimitiveOperator } from "../operator/operators.ts";
-import { Pokemon, pokemon } from '../data/pokemon.ts';
+import { Pokemon, pokemon } from "../data/pokemon.ts";
 
 Deno.test("PrimitiveOperator: instantiates with value", () => {
   const data = { id: "1234", name: "foo" };
@@ -29,11 +29,11 @@ Deno.test("PrimitiveOperator: updates a value", () => {
   );
 });
 
-Deno.test('PrimitiveOperator: picks object keys', () => {
+Deno.test("PrimitiveOperator: picks object keys", () => {
   const rawPokemon = pokemon[0];
 
   const op = new PrimitiveOperator<Pokemon>(rawPokemon);
-  const charredPokemon = op.pick(['name', 'weight']);
+  const charredPokemon = op.pick(["name", "weight"]);
 
   assertEquals(
     charredPokemon.value(),

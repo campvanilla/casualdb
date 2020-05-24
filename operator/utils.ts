@@ -35,5 +35,11 @@ export const compareFunction = <M>(keys: SortKeys<M>) => {
   };
 };
 
+export const createNewOperator = <T>(
+  data: T,
+): T extends (infer U)[] ? CollectionOperator<U> : PrimitiveOperator<T> => {
+  if (Array.isArray(data)) {
+    return new CollectionOperator(data) as any;
   }
+  return new PrimitiveOperator(data) as any;
 };

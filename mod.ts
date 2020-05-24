@@ -1,9 +1,10 @@
 import get from "https://deno.land/x/lodash/get.js";
 import set from "https://deno.land/x/lodash/set.js";
 
-import Connector from './connector.ts';
-import { CollectionOperator, PrimitiveOperator } from './operator/operators.ts';
-import { ConnectOptions } from './types.ts';
+import Connector from "./connector.ts";
+import { CollectionOperator, PrimitiveOperator } from "./operator/operators.ts";
+import { ConnectOptions } from "./types.ts";
+import { createNewOperator } from "./operator/utils.ts";
 
 class CasualDB<Schema> {
   private connector: Connector<Schema>;
@@ -16,15 +17,11 @@ class CasualDB<Schema> {
     return this.connector.connect(fsPath, options);
   }
 
-  async get<T>(path: string): Promise<T extends (infer U)[] ? CollectionOperator<U> : PrimitiveOperator<T>> {
+  async get<T>(path: string) {
     const data = await this.connector.read();
     const value: T = get(data, path, null);
 
-    if (Array.isArray(value)) {
-      return new CollectionOperator(value) as any;
-    }
-
-    return new PrimitiveOperator(value) as any;
+    return createNewOperator<T>(value);
   }
 
   async seed(data: Schema) {
@@ -40,4 +37,4 @@ class CasualDB<Schema> {
 
 export default CasualDB;
 export { CasualDB };
-export { PrimitiveOperator, CollectionOperator } from './operator/operators.ts';
+export { PrimitiveOperator, CollectionOperator } from "./operator/operators.ts";
