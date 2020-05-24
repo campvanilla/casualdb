@@ -22,6 +22,10 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
     return this.data.length;
   }
 
+  push(data: Op) {
+    return new CollectionOperator([...this.data, data]);
+  }
+
   /**
    * Find & return one element from the collection
    */
@@ -39,10 +43,6 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
 
     const found = this.data.find((i) => predicateFunction(i));
     return createNewOperator(found || null);
-  }
-
-  push(data: Op) {
-    return new CollectionOperator([...this.data, data]);
   }
 
   findAll(predicate: Predicate<Op>): CollectionOperator<Op> {

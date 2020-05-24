@@ -180,7 +180,7 @@ await db.write('posts.0.title', 'Post 1');
 
 ### PrimitiveOperator
 
-When performing a `db.get()` on a path that returns a non-array value, the Promise resolves to a `PrimitiveOperator`. The _PrimitiveOperator_ class encapsulates functions that allow you work with the data. All functions that are a part of _PrimitiveOperator_ enable function chaining.
+When performing a `db.get()` on a path that returns a non-array value, the Promise resolves to an instance of `PrimitiveOperator`. The _PrimitiveOperator_ class encapsulates functions that allow you work with any non-array-like data in javascript (eg. `object`, `string`, `number`, `boolean`). All functions that are a part of _PrimitiveOperator_ allow function chaining.
 
 ```ts
 interface Schema {
@@ -249,7 +249,7 @@ data
 
 ### CollectionOperator
 
-When performing a `db.get()` on a path that returns array value, the Promise resolves to a `CollectionOperator`. The _CollectionOperator_ class encapsulates functions that allow you work with the data. All functions that are a part of _CollectionOperator_ enable function chaining.
+When performing a `db.get()` on a path that returns an array, the Promise resolves to a instance of `CollectionOperator`. The _CollectionOperator_ class encapsulates functions that allow you work with array-like data (collection of items). All functions that are a part of _CollectionOperator_ allow function chaining.
 
 ```ts
 interface Schema {
@@ -275,6 +275,12 @@ Instances of this class contain the following methods. All methods are chainable
 * [.findOne()](#collection-operator-findOne)
 * [.findAllAndUpdate()](#collection-operator-findAllAndUpdate)
 * [.findAllAndRemove()](#collection-operator-findAllAndRemove)
+* [.findById()](#collection-operator-findById)
+* [.findByIdAndRemove()](#collection-operator-findByIdAndRemove)
+* [.findByIdAndUpdate()](#collection-operator-findByIdAndUpdate)
+* [.sort()](#collection-operator-sort)
+* [.page()](#collection-operator-page)
+* [.pick()](#collection-operator-pick)
 
 <h4 id='collection-operator-value'>
   .value()
@@ -304,12 +310,12 @@ console.log(data.size()); // 2
 .findOne(predicate: Object | Function => boolean)
 </code></h4>
 
-Searches array and returns a value if found, else returns `null`. The predicate can be of two forms:
+Searches through the collection items and returns an item if found, else returns an instance of `PrimitiveOperator<null>`. The predicate can be of two forms:
 
-1. An object with keys that you would like to match
+1. An object with keys that you would like to match. The keys of the object should be a subset of the keys available on the items of the collection.
 2. A search-function where you can provide your custom logic and return `true` for the condition you are looking for.
 
-Returns a `PrimitiveOperator` or `CollectionOperator`  based on type of the found element.
+Returns a `PrimitiveOperator` or `CollectionOperator` based on type of the found element.
 
 ```ts
 const data = await db.get<Schema["posts"]>('posts');
@@ -331,7 +337,7 @@ data
 .push(value)
 </code></h4>
 
-Push a new value into array. Returns a `ColletionOperator` with the updated array.
+Push a new value into the collection. Returns a `CollectionOperator` with the updated items.
 
 ```ts
 const data = await db.get<Schema["posts"]>('posts');
@@ -345,12 +351,12 @@ data
 .findAll(predicate: Object | Function => boolean)
 </code></h4>
 
-Searches an array and return all occurrences that satisfy the predicate. The predicate can be of two forms:
+Searches through the items of the collection and returns a `CollectionOperator` of all occurrences that satisfy the predicate. The predicate can be of two forms:
 
-1. An object with keys that you would like to match
+1. An object with keys that you would like to match. The keys of the object should be a subset of the keys available on the items of the collection.
 2. A search-function where you can provide your custom logic and return `true` for the condition you are looking for.
 
-Returns a `CollectionOperator` with the subset of values satisfying the predicate.
+Returns a `CollectionOperator` with the subset of items.
 
 ```ts
 const data = await db.get<Schema["posts"]>('posts');
@@ -373,9 +379,9 @@ data
 </code></h4>
 
 
-Searches an array and updates all occurrences that satisfy the predicate with the return value of the _updateMethod_. The predicate can be of two forms:
+Searches through the collection and returns a `CollectionOperator` with all occurrences that satisfy the predicate updated with the return value of the _updateMethod_. The predicate can be of two forms:
 
-1. An object with keys that you would like to match
+1. An object with keys that you would like to match. The keys of the object should be a subset of the keys available on the items of the collection.
 2. A search-function where you can provide your custom logic and return `true` for the condition you are looking for.
 
 Returns a `CollectionOperator` with the updated array.
@@ -404,9 +410,9 @@ data
 </code></h4>
 
 
-Searches an array and **removes** all occurrences that satisfy the predicate. The predicate can be of two forms:
+Searches through the collection and returns a new `CollectionOperator` where all occurrences that satisfy the predicate are *omitted*. The predicate can be of two forms:
 
-1. An object with keys that you would like to match
+1. An object with keys that you would like to match. The keys of the object should be a subset of the keys available on the items of the collection.
 2. A search-function where you can provide your custom logic and return `true` for the condition you are looking for.
 
 Returns a `CollectionOperator` with the updated array.
@@ -424,3 +430,77 @@ data
   .findAllAndRemove((value) => value.views > 40)
   .value(); // [{ id: 2, title: "Post 2", views: 30 }];
 ```
+
+<h4 id="collection-operator-findById">
+<code>.findById(id: string)</code>
+</h4>
+
+Syntactical sugar for `.findOne({ id })`.
+
+
+<h4 id="collection-operator-findByIdAndRemove">
+<code>.findByIdAndRemove(id: string)</code>
+</h4>
+
+Syntactical sugar for `.findAllAndRemove({ id })`.
+
+<h4 id="collection-operator-findByIdAndUpdate">
+<code>.findByIdAndUpdate(id: string, updateMethod: (value) => T)</code>
+</h4>
+
+Syntactical sugar for `.findAllAndUpdate({ id }, updateMethod)`.
+
+<h4 id="collection-operator-sort">
+<code>.sort(predicate: string[] | Function => boolean)</code>
+</h4>
+
+Sorts and returns a new sorted `CollectionOperator` instance. The comparison predicate can be one of two types:
+- **an array of keys** to select for sorting the items in the collection (priority is left-right).<br />
+For example, when the predicate is `['views','id']`, the method will first sort *posts* in ascending order of *views* that each post has. Any posts which have the *same* number of views, will then be sorted by `id`.
+- a **compare function** similar to [`Array.prototype.sort`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)'s `compareFunction`.
+
+```ts
+const posts = await db.get<Schema["posts"]>('posts');
+
+posts
+  .sort(['views'])
+  .value() // [{ id: 2, title: "Post 2", views: 30 }, { id: 1, title: "Post 1", views: 99 }]
+
+// or
+
+posts
+  .sort((a,b) => a.views - b.views)
+  .value() // [{ id: 2, title: "Post 2", views: 30 }, { id: 1, title: "Post 1", views: 99 }]
+```
+
+<h4 id="collection-operator-page">
+<code>.page(page: number, pageSize: number)</code>
+</h4>
+
+Returns a paginated subset of the collection.
+
+```ts
+const posts = await db.get<Schema["posts"]>('posts');
+
+posts
+  .page(1, 1)
+  .value() // [{ id: 1, title: "Post 1", views: 99 }]
+```
+
+<h4 id="collection-operator-pick">
+<code>.pick(keys: string[])</code>
+</h4>
+
+Returns a `CollectionOperator` of items with each item having only the *picked* keys. Only keys present on the type of the items in the collection are allowed. If the item is not an object, this method returns an empty object (`{}`) for it.
+
+```ts
+const posts = await db.get<Schema["posts"]>('posts');
+
+posts
+  .pick(['title'])
+  .value() // [{ title: "Post 1" }, { title: "Post 2" }]
+```
+
+## Contributing
+
+<!-- TODO -->
