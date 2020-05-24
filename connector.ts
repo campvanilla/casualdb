@@ -23,7 +23,7 @@ export class Connector<Schema = any> {
   }
 
   private _createTaskId(): string {
-    return `casualdb::connector:${getNow()}`;
+    return `casualdb:connector:${getNow()}`;
   }
 
   async read() {
@@ -76,7 +76,7 @@ export class Connector<Schema = any> {
         } else if (error) {
           reject(error);
         } else {
-          console.debug("[casualdb:debug]", { returnedTaskId, taskId, error });
+          console.debug("[casualdb:connector:debug]", { returnedTaskId, taskId, error });
           reject(new Error(`[casualdb] unknown error while writing to file`));
         }
         if (timeout) {
