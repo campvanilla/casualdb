@@ -1,16 +1,18 @@
 import matches from "https://deno.land/x/lodash/matches.js";
 
-import { BaseOperator } from './base.ts';
-import { PrimitiveOperator } from './primitive.ts';
-import { SortArg, Predicate } from './types.ts';
-import { compareFunction } from './utils.ts';
+import { BaseOperator } from "./base.ts";
+import { PrimitiveOperator } from "./primitive.ts";
+import { SortArg, Predicate } from "./types.ts";
+import { compareFunction } from "./utils.ts";
 
 export class CollectionOperator<Op> extends BaseOperator<Op[]> {
   constructor(data: Op[]) {
     super(data);
 
     if (!Array.isArray(data)) {
-      throw new Error('[casualdb] CollectionOperator initialized with a value that is not an array.');
+      throw new Error(
+        "[casualdb] CollectionOperator initialized with a value that is not an array.",
+      );
     }
   }
 
@@ -30,11 +32,13 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
      * - Pass an object which will be deep-compared with each item in the collection until a match is "found";
      *   using `_.matches` from lodash as the function.
      */
-    predicate: Predicate<Partial<T>>
+    predicate: Predicate<Partial<T>>,
   ): PrimitiveOperator<Op | null> {
-    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
+    const predicateFunction = typeof predicate === "function"
+      ? predicate
+      : matches(predicate);
 
-    const found = this.data.find(i => predicateFunction(i));
+    const found = this.data.find((i) => predicateFunction(i));
     return new PrimitiveOperator(found || null);
   }
 
@@ -43,16 +47,20 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
   }
 
   findAll(predicate: Predicate<Op>): CollectionOperator<Op> {
-    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
+    const predicateFunction = typeof predicate === "function"
+      ? predicate
+      : matches(predicate);
     const filtered = this.data.filter(predicateFunction);
     return new CollectionOperator(filtered);
   }
 
   findAllAndUpdate<T = Op>(
     predicate: Predicate<Partial<T>>,
-    updateMethod: (value: Op) => Op
+    updateMethod: (value: Op) => Op,
   ): CollectionOperator<Op> {
-    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
+    const predicateFunction = typeof predicate === "function"
+      ? predicate
+      : matches(predicate);
 
     return new CollectionOperator(this.data.map((value: Op) => {
       if (predicateFunction(value)) {
@@ -66,8 +74,12 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
   findAllAndRemove<T = Op>(
     predicate: Predicate<Partial<T>>,
   ): CollectionOperator<Op> {
-    const predicateFunction = typeof predicate === 'function' ? predicate : matches(predicate);
-    return new CollectionOperator(this.data.filter((value: Op) => !predicateFunction(value)));
+    const predicateFunction = typeof predicate === "function"
+      ? predicate
+      : matches(predicate);
+    return new CollectionOperator(
+      this.data.filter((value: Op) => !predicateFunction(value)),
+    );
   }
 
   findById(id: string | number) {
@@ -79,11 +91,14 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
   }
 
   findByIdAndUpdate(id: string | number, updateMethod: (value: Op) => Op) {
-    return this.findAllAndUpdate<{ id?: string | number }>({ id }, updateMethod);
+    return this.findAllAndUpdate<{ id?: string | number }>(
+      { id },
+      updateMethod,
+    );
   }
 
   sort(compare: SortArg<Op>) {
-    if (typeof compare === 'function') {
+    if (typeof compare === "function") {
       const sorted = [...this.data].sort(compare);
       return new CollectionOperator(sorted);
     }

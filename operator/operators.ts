@@ -1,2 +1,2 @@
-export * from './primitive.ts';
-export * from './collection.ts';
+export * from "./primitive.ts";
+export * from "./collection.ts";
