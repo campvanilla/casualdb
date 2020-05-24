@@ -510,6 +510,6 @@ This project has taken inspiration from [lowdb](https://github.com/typicode/lowd
 
 ## Contributing
 
-Want to raise an issue or pull request? Do give our [Contribution Guidelines](./.github/CONTRIBUTING.md) page a read. 🤓
+Want to raise an issue or pull request? Do give our [Contribution Guidelines](.github/contributing.md) page a read. 🤓
 
 
