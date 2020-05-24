@@ -77,4 +77,25 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
     const sorted = [...this.data].sort(compareFunction(compare));
     return new CollectionOperator(sorted);
   }
+
+  page(page: number, pageSize: number): CollectionOperator<Op> {
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+
+    return new CollectionOperator(this.data.slice(start, end));
+  }
+
+  pick<U extends keyof Op>(keys: Array<U>) {
+    return new CollectionOperator(this.data.map((value) => {
+      const obj = {} as { [P in U]: Op[P] };
+      
+      keys.forEach((key) => {
+        if (value[key]) {
+          obj[key] = value[key];
+        }
+      });
+
+      return obj;
+    }));
+  }
 }

@@ -119,3 +119,77 @@ Deno.test("CollectionOperator: sort by certain key", () => {
   assertEquals(1,1);
   // assertEquals
 });
+
+Deno.test("CollectionOperator: pagination", () => {
+  const allPokemon = new CollectionOperator<Pokemon>(pokemon);
+  
+  assertEquals(
+    allPokemon
+      .sort(['height'])
+      .page(1, 2)
+      .value(),
+    [
+      {
+        "name": "flabebe",
+        "id": 669,
+        "weight": 1,
+        "height": 1,
+        "types": ["fairy"]
+      },
+      {
+        "name": "diglett",
+        "id": 50,
+        "weight": 8,
+        "height": 2,
+        "types": ["ground"]
+      },
+    ]
+  );
+});
+
+
+Deno.test("CollectionOperator: pick", () => {
+  const allPokemon = new CollectionOperator<Pokemon>(pokemon);
+
+  const result = allPokemon
+      .pick(["name", "id"])
+      .value();
+    
+  assertEquals(
+    result,
+    [
+      {
+        "name": "charizard",
+        "id": 6,
+      },
+      {
+        "name": "typhlosion",
+        "id": 157,
+      },
+      {
+        "name": "emboar",
+        "id": 500,
+      },
+      {
+        "name": "garchomp",
+        "id": 445,
+      },
+      {
+        "name": "diglett",
+        "id": 50,
+      },
+      {
+        "name": "jirachi",
+        "id": 385,
+      },
+      {
+        "name": "flabebe",
+        "id": 669,
+      },
+      {
+        "name": "wailord",
+        "id": 321,
+      }
+    ]
+  );
+});
