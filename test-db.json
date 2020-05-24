@@ -1,7 +1,0 @@
-{
-  "posts": [
-    { "id": 1, "title": "Post 1", "views": 99 },
-    { "id": 2, "title": "Post 2", "views": 30 }
-  ],
-  "user": { "name": "Camp Vanilla", "age": 5 }
-}

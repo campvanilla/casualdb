@@ -1,26 +1,34 @@
 import { readJson } from "https://deno.land/std/fs/read_json.ts";
 import { writeJson } from "https://deno.land/std/fs/write_json.ts";
 
-import { ConnectOptions } from "./types.ts";
+export interface ConnectOptions {
+  bailIfNotPresent?: boolean;
+}
 
-class Connector<Schema> {
-  private filePath: string;
+const getNow = Date.now;
 
-  constructor() {
-    this.filePath = "";
-  }
+export class Connector<Schema = any> {
+  private _filePath: string = "";
+  private readonly WRITE_TIMEOUT: number = 10000;
+  private readonly WRITE_WORKER_PATH: string = "./writeWorker.ts";
+  private readonly WRITE_WORKER_OPTIONS: { type: "module"; deno: boolean } = {
+    type: "module",
+    deno: true,
+  };
 
-  private checkConnection() {
-    if (!this.filePath) {
+  private _checkConnection() {
+    if (!this._filePath) {
       throw new Error("DB connection not set. Cannot read.");
     }
   }
 
-  async read(): Promise<Schema> {
-    this.checkConnection();
-    const data = await readJson(this.filePath);
+  private _createTaskId(): string {
+    return `casualdb::connector:${getNow()}`;
+  }
 
-    return data as Schema;
+  async read() {
+    this._checkConnection();
+    return readJson(this._filePath) as Promise<Schema>;
   }
 
   async connect(fsPath: string, options?: ConnectOptions): Promise<void> {
@@ -31,7 +39,7 @@ class Connector<Schema> {
         throw new Error("Not a file");
       }
 
-      this.filePath = fsPath;
+      this._filePath = fsPath;
       this.read();
     } catch (err) {
       if (
@@ -39,26 +47,56 @@ class Connector<Schema> {
         !options?.bailIfNotPresent
       ) {
         await writeJson(fsPath, {});
-        this.filePath = fsPath;
+        this._filePath = fsPath;
         return;
       }
       throw err;
     }
   }
 
-  async write(data: Schema) {
-    this.checkConnection();
+  write(data: Schema) {
+    return new Promise((resolve, reject) => {
+      this._checkConnection();
+      const taskId = this._createTaskId();
+      let timeout: null | number = null;
 
-    const worker = new Worker(
-      "./writeWorker.ts",
-      { type: "module", deno: true },
-    );
+      const worker = new Worker(
+        this.WRITE_WORKER_PATH,
+        { ...this.WRITE_WORKER_OPTIONS },
+      );
 
-    worker.postMessage({
-      file: this.filePath,
-      data,
+      worker.onmessage = (e) => {
+        const { taskId: returnedTaskId, error } = e.data;
+
+        if (
+          returnedTaskId && returnedTaskId.toString() === taskId &&
+          error === false
+        ) {
+          resolve();
+        } else if (error) {
+          reject(error);
+        } else {
+          console.debug("[casualdb:debug]", { returnedTaskId, taskId, error });
+          reject(new Error(`[casualdb] unknown error while writing to file`));
+        }
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+      };
+
+      worker.postMessage({
+        file: this._filePath,
+        taskId,
+        data,
+      });
+
+      timeout = setTimeout(() => {
+        reject(
+          new Error(
+            `[casualdb] timed out while waiting for worker to respond while writing.`,
+          ),
+        );
+      }, this.WRITE_TIMEOUT);
     });
   }
 }
-
-export default Connector;

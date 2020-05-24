@@ -1,29 +1,24 @@
 import { CasualDB } from "../mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
-Deno.test("casualdb: sanity with posts & users", async () => {
-  interface Schema {
-    posts: Array<{
-      id: number;
-      title: string;
-      views: number;
-    }>;
-    user: {
-      name: string;
-    };
-  }
+import { blog, Blog } from "../data/blog.ts";
 
-  const db = new CasualDB<Schema>();
+Deno.test("casualdb: creates a db and can perform operations on it", async () => {
+  const db = new CasualDB<Blog>();
+  const timestamp = Date.now();
 
-  // "connect" to the db (JSON file)
-  await db.connect("./test-db.json");
+  await db.connect(`./.casualdb/${timestamp}-casual-test.json`);
+  await db.seed(blog);
 
-  const posts = await db.get<Schema["posts"]>("posts");
-
+  const posts = await db.get<Blog["posts"]>("posts");
   const postTitlesByViews = posts.sort(["views"]).pick(["title"]);
 
   assertEquals(
     postTitlesByViews.value(),
-    [{ title: "Post 2" }, { title: "Post 1" }],
+    [
+      { title: "Color Me Addams" },
+      { title: "Hand Delivered" },
+      { title: "Little Doll Lost" },
+    ],
   );
 });
