@@ -1,7 +1,7 @@
 import { readJson } from "https://deno.land/std/fs/read_json.ts";
 import { writeJson } from "https://deno.land/std/fs/write_json.ts";
 
-import { ConnectOptions } from './types.ts';
+import { ConnectOptions } from "./types.ts";
 
 class Connector<Schema> {
   private filePath: string;
@@ -48,7 +48,7 @@ class Connector<Schema> {
 
   async write(data: Schema) {
     this.checkConnection();
-    
+
     const worker = new Worker(
       "./writeWorker.ts",
       { type: "module", deno: true },
