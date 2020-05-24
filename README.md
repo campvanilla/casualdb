@@ -11,10 +11,18 @@
 
 
 <p align="center">
-  <h4>WARNING</h4>: This project is still in beta phase. We are actively working on enhancing the API and ironing out kinks. If you find a bug or have a feature request, feel free to create an issue or contribute. 🙂
+  <strong>WARNING</strong>: This project is still in beta phase. We are actively working on enhancing the API and ironing out kinks. If you find a bug or have a feature request, feel free to create an issue or contribute. 🙂
 </p>
 
-## Usage
+## Contents
+
+- [Quick Usage](#quick-usage)
+- [Installation](#installation)
+- [API](#api)
+- [Inspiration](#inspiration)
+- [Contributing](#contributing)
+
+## Quick Usage
 
 ```ts
 // create an interface to describe the structure of your JSON
@@ -51,15 +59,10 @@ const postTitlesByViews = (
 );
 ```
 
-### Inspiration
-
-This project has taken inspiration from [lowdb](https://github.com/typicode/lowdb) and [mongoose](https://mongoosejs.com/). <TODO: Add need>
-
-
 ## Installation
 
 ```ts
-import { CasualDB } from "/blob/master/mod.ts";
+import { CasualDB } from "https://github.com/campvanilla/casualdb/blob/master/mod.ts";
 
 // create an interface to describe the structure of your JSON
 interface Schema {
@@ -501,6 +504,12 @@ posts
   .value() // [{ title: "Post 1" }, { title: "Post 2" }]
 ```
 
+## Inspiration
+
+This project has taken inspiration from [lowdb](https://github.com/typicode/lowdb) and [mongoose](https://mongoosejs.com/). <TODO: Add need>
+
 ## Contributing
 
-<!-- TODO -->
+Want to raise an issue or pull request? Do give our [Contribution Guidelines](./.github/CONTRIBUTING.md) page a read. 🤓
+
+
