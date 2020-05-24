@@ -1,9 +1,8 @@
 import matches from "https://deno.land/x/lodash/matches.js";
 
 import { BaseOperator } from "./base.ts";
-import { PrimitiveOperator } from "./primitive.ts";
 import { SortArg, Predicate } from "./types.ts";
-import { compareFunction } from "./utils.ts";
+import { compareFunction, createNewOperator } from "./utils.ts";
 
 export class CollectionOperator<Op> extends BaseOperator<Op[]> {
   constructor(data: Op[]) {
@@ -26,20 +25,20 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
   /**
    * Find & return one element from the collection
    */
-  findOne<T = Op>(
+  findOne(
     /** the predicate must be either:
      * - a function which returns true when the desired item from the collection is "found".
      * - Pass an object which will be deep-compared with each item in the collection until a match is "found";
      *   using `_.matches` from lodash as the function.
      */
-    predicate: Predicate<Partial<T>>,
-  ): PrimitiveOperator<Op | null> {
+    predicate: Predicate<Op>,
+  ) {
     const predicateFunction = typeof predicate === "function"
       ? predicate
       : matches(predicate);
 
     const found = this.data.find((i) => predicateFunction(i));
-    return new PrimitiveOperator(found || null);
+    return createNewOperator(found || null);
   }
 
   push(data: Op) {
@@ -83,7 +82,7 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
   }
 
   findById(id: string | number) {
-    return this.findOne<{ id?: string | number }>({ id });
+    return this.findOne({ id } as unknown as Op);
   }
 
   findByIdAndRemove(id: string | number) {

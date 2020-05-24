@@ -1,5 +1,11 @@
-import { CollectionOperator } from "../operator/operators.ts";
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import {
+  CollectionOperator,
+  PrimitiveOperator,
+} from "../operator/operators.ts";
+import {
+  assertEquals,
+  assertNotEquals,
+} from "https://deno.land/std/testing/asserts.ts";
 
 import { Pokemon, pokemon } from "../data/pokemon.ts";
 
@@ -28,6 +34,26 @@ Deno.test("CollectionOperator: findOne with simple predicate", () => {
   const op = new CollectionOperator(data);
 
   assertEquals(op.findOne({ name: "foo" }).value(), { id: "1", name: "foo" });
+});
+
+Deno.test("CollectionOperator: findOne with collection result", () => {
+  const numbers = new CollectionOperator([[1, 3, 5], [2, 4, 6]]);
+  const isEven = (item: number) => item % 2 === 0;
+  const isFour = (item: number) => item === 4;
+
+  const evenElements = numbers.findOne((element) => element.some(isEven));
+
+  assertEquals(evenElements instanceof CollectionOperator, true);
+  assertEquals(evenElements.value(), [2, 4, 6]);
+
+  if (evenElements instanceof CollectionOperator) {
+    const four = evenElements.findOne(isFour);
+    assertNotEquals(four.value(), null);
+
+    if (four instanceof PrimitiveOperator) {
+      assertEquals(four.value(), 4);
+    }
+  }
 });
 
 Deno.test("CollectionOperator: findOne with cb predicate", () => {
