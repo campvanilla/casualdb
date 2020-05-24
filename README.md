@@ -1,7 +1,14 @@
 
-<img src="https://user-images.githubusercontent.com/6426069/82755043-bb65a700-9dee-11ea-9de4-e57476f216db.png" width="300" />
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/6426069/82755043-bb65a700-9dee-11ea-9de4-e57476f216db.png" width="300" />
+</p>
 
-> Simple JSON "database" for Deno with type-safety!
+<p align="center">
+  <sub>
+    Simple JSON "database" for Deno with type-safety! ⚡️
+  </sub>
+</p>
+
 
 <p align="center">
   <strong>WARNING</strong>: This project is still in beta phase. We are actively working on enhancing the API and ironing out kinks. If you find a bug or have a feature request, feel free to create an issue or contribute. 🙂
@@ -186,7 +193,7 @@ Returns the value of the data.
 ```ts
 const data = await db.get<Schema["posts"][number]>('posts.0');
 
-console.log(data.value());
+data.value(); // { id: 1, title: "Post 1", views: 99 }
 ```
 
 **.update<T>(updateMethod: (currentValue) => T)**
@@ -200,7 +207,7 @@ data
   .update((value) => ({
     title: "Modified Post",
   }))
-  .value(),
+  .value(); // { id: 1, title: "Modified Post" }
 ```
 
 **.pick(keys: string[])**
@@ -210,5 +217,138 @@ Picks and returns a subset of keys from the data. Method allows only keys presen
 ```ts
 const data = await db.get<Schema["posts"][number]>('posts.0');
 
-console.log(data.pick(["id", "title"]));
+data
+  .pick(["id", "title"])
+  .value(); // { id: 1, title: "Post 1" }
+```
+
+### CollectionOperator
+
+When performing a `db.get()` on a path that returns array value, the Promise resolves to a `CollectionOperator`. The _CollectionOperator_ class encapsulates functions that allow you work with the data. All functions that are a part of _CollectionOperator_ enable function chaining.
+
+```ts
+interface Schema {
+  posts: Array<{
+    id: number;
+    title: string;
+    views: number;
+  }>;
+  user: {
+    name: string;
+  };
+}
+
+const data = await db.get<Schema["posts"]>('posts'); // ✅ CollectionOperator as the value is an array.
+
+const data = await db.get<Schema["posts"][number]>('posts.0'); // ❌ PrimitiveOperator as the value is a non-array.
+```
+
+**.value()**
+
+Returns the value of the data.
+
+```ts
+const data = await db.get<Schema["posts"]>('posts');
+
+console.log(data.value()); // [ { id: 1, title: "Post 1", views: 99 }, { id: 2, title: "Post 2", views: 30 }, ]
+```
+
+**.size()**
+
+Returns the length of the data.
+
+```ts
+const data = await db.get<Schema["posts"]>('posts');
+
+console.log(data.size()); // 2
+```
+
+**.findOne(predicate: Object | Function => boolean)**
+
+Searches array and returns a value if found, else returns `null`. The predicate can be of two forms:
+
+1. An object with keys that you would like to match
+2. A search-function where you can provide your custom logic and return `true` for the condition you are looking for.
+
+Returns a `PrimitiveOperator` or `CollectionOperator`  based on type of the found element.
+
+```ts
+const data = await db.get<Schema["posts"]>('posts');
+
+data
+  .findOne({ id: 1 })
+  .value();// { id: 1, title: "Post 1", views: 99 }
+
+// or
+
+data
+  .findOne((value) => {
+    return value.id === 1
+  })
+  .value(); // { id: 1, title: "Post 1", views: 99 }
+```
+
+**.push(value)**
+
+Push a new value into array. Returns a `ColletionOperator` with the updated array.
+
+```ts
+const data = await db.get<Schema["posts"]>('posts');
+
+data
+  .push({ id: 3, post: 'Post 3', views: 45 })
+  .value(); // [ { id: 1, title: "Post 1", views: 99 }, { id: 2, title: "Post 2", views: 30 }, { id: 3, title: "Post 3", views: 45 } ]
+```
+
+**.findAll(predicate: Object | Function => boolean)**
+
+Searches an array and return all occurrences that satisfy the predicate. The predicate can be of two forms:
+
+1. An object with keys that you would like to match
+2. A search-function where you can provide your custom logic and return `true` for the condition you are looking for.
+
+Returns a `CollectionOperator` with the subset of values satisfying the predicate.
+
+```ts
+const data = await db.get<Schema["posts"]>('posts');
+
+data
+  .findAll({ title: 'Post 1' })
+  .value();// [{ id: 1, title: "Post 1", views: 99 }]
+
+// or
+
+data
+  .findAll((value) => {
+    return value.views > 40;
+  })
+  .value(); // [{ id: 1, title: "Post 1", views: 99 },{ id: 3, title: "Post 3", views: 45 }];
+```
+
+**.findAllAndUpdate(predicate: Object | Function => boolean, updateMethod: (value) => T)**
+
+Searches an array and updates all occurrences that satisfy the predicate with the return value of the _updateMethod_. The predicate can be of two forms:
+
+1. An object with keys that you would like to match
+2. A search-function where you can provide your custom logic and return `true` for the condition you are looking for.
+
+Returns a `CollectionOperator` with the updated array.
+
+```ts
+const data = await db.get<Schema["posts"]>('posts');
+
+data
+  .findAllAndUpdate({ title: 'Post 1' }, (value) => ({ ...value, title: 'Modified Post' }))
+  .value(); // [{ id: 1, title: "Modified Post", views: 99 },{ id: 2, title: "Post 2", views: 30 }, { id: 3, title: "Post 3", views: 45 }]
+
+// or
+
+data
+  .findAllAndUpdate((value) => {
+    return value.views > 40;
+  }, (value) => ({
+    ...value,
+    title: 'Trending Post'
+  }))
+  .value(); // [{ id: 1, title: "Trending Post", views: 99 }, { id: 2, title: "Post 2", views: 30 }, { id: 3, title: "Trending Post", views: 45 }];
 ```
