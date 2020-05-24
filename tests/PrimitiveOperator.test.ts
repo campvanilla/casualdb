@@ -1,4 +1,4 @@
-import { PrimitiveOperator } from "../operator.ts";
+import { PrimitiveOperator } from "../operator/operators.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 Deno.test("PrimitiveOperator: instantiates with value", () => {

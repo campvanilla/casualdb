@@ -2,7 +2,7 @@ import get from "https://deno.land/x/lodash/get.js";
 import set from "https://deno.land/x/lodash/set.js";
 
 import Connector from './connector.ts';
-import { CollectionOperator, PrimitiveOperator } from './operator.ts';
+import { CollectionOperator, PrimitiveOperator } from './operator/operators.ts';
 import { ConnectOptions } from './types.ts';
 
 class CasualDB<Schema, Current = any> {
