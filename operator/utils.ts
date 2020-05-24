@@ -2,7 +2,7 @@ import { SortKeys } from './types.ts';
 
 export const compareByType = (a: any, b: any) => {
   if (typeof a !== typeof b) {
-    throw new Error('[CasualDB] Cannot compare dissimilar types when sorting.');
+    throw new Error('[casualdb] Cannot compare dissimilar types when sorting.');
   }
 
   if (typeof a === 'number' ) {

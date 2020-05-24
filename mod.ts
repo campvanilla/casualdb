@@ -5,7 +5,7 @@ import Connector from './connector.ts';
 import { CollectionOperator, PrimitiveOperator } from './operator/operators.ts';
 import { ConnectOptions } from './types.ts';
 
-class CasualDB<Schema, Current = any> {
+class CasualDB<Schema> {
   private connector: Connector<Schema>;
 
   constructor() {
@@ -38,72 +38,6 @@ class CasualDB<Schema, Current = any> {
   }
 }
 
-interface Schema {
-  posts: Array<{
-    id: number;
-    title: string;
-  }>;
-  user: {
-    name: string;
-    age: number;
-  };
-}
-
-const test = new CasualDB<Schema>();
-await test.connect("./test-db.json");
-
-await test.seed({
-  posts: [{
-    id: 1,
-    title: "Post 1",
-  }, {
-    id: 2,
-    title: "Post 2",
-  }],
-  user: {
-    name: "Camp Vanilla",
-    age: 5,
-  },
-});
-
-const data = await test.get<Schema["posts"]>("posts");
-const updateData = data.findById(2);
-
-console.log(updateData.value());
-// await test.write(
-//   "posts",
-//   data
-//     .findAll((value: any) => {
-//       return value.title === 'Post 1';
-//     })
-//     .update((value: any) => ({ ...value, id: 4 }))
-//     .value(),
-// );
-// console.log(data.value());
-// const updatedData = data.update(() => {
-//   return {
-//     id: "3",
-//     title: "modified",
-//   };
-// }).value();
-
-// console.log(updatedData);
-
-// await test.write("posts[1]", updatedData);
-
-// const updatedData = await test.get("posts[1]");
-// console.log(updatedData.value());
-
-// console.log("write", await test.write("user.name", "Camp Vanilla 123"));
-// console.log("get", await test.get("user.name"));
-// console.log(
-//   "update",
-//   await test.update<number>("user.age", (value) => {
-//     console.log("Previous value", value);
-//     return value + 1;
-//   }),
-// );
-// console.log("get", await test.get("user.age"));
-// console.log("count", await test.size("posts"));
-// console.log("findById", await test.findById("posts", "2"));
-// console.log("findById", await test.findById("users", "2"));
+export default CasualDB;
+export { CasualDB };
+export { PrimitiveOperator, CollectionOperator } from './operator/operators.ts';

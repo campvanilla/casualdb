@@ -6,7 +6,7 @@ export class PrimitiveOperator<Op> extends BaseOperator<Op> {
     super(data);
 
     if (Array.isArray(data)) {
-      throw new Error('[CasualDb] PrimitiveOperator; initialized with a value that is an array.');
+      throw new Error('[casualdb] PrimitiveOperator; initialized with a value that is an array.');
     }
   }
 

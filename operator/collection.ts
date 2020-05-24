@@ -10,7 +10,7 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
     super(data);
 
     if (!Array.isArray(data)) {
-      throw new Error('[CasualDb] CollectionOperator initialized with a value that is not an array.');
+      throw new Error('[casualdb] CollectionOperator initialized with a value that is not an array.');
     }
   }
 
@@ -101,7 +101,7 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
   pick<U extends keyof Op>(keys: Array<U>) {
     return new CollectionOperator(this.data.map((value) => {
       const obj = {} as { [P in U]: Op[P] };
-      
+
       keys.forEach((key) => {
         if (value[key]) {
           obj[key] = value[key];
