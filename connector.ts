@@ -84,12 +84,6 @@ export class Connector<Schema = any> {
         }
       };
 
-      worker.postMessage({
-        file: this._filePath,
-        taskId,
-        data,
-      });
-
       timeout = setTimeout(() => {
         reject(
           new Error(
@@ -97,6 +91,12 @@ export class Connector<Schema = any> {
           ),
         );
       }, this.WRITE_TIMEOUT);
+
+      worker.postMessage({
+        file: this._filePath,
+        taskId,
+        data,
+      });
     });
   }
 }
