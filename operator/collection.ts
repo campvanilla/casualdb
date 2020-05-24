@@ -71,10 +71,10 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
 
   sort(compare: SortArg<Op>) {
     if (typeof compare === 'function') {
-      const sorted = this.data.sort(compare);
+      const sorted = [...this.data].sort(compare);
       return new CollectionOperator(sorted);
     }
-    const sorted = this.data.sort(compareFunction(compare));
+    const sorted = [...this.data].sort(compareFunction(compare));
     return new CollectionOperator(sorted);
   }
 }
