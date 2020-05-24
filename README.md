@@ -11,7 +11,7 @@
 
 
 <p align="center">
-  <strong>WARNING</strong>: This project is still in beta phase. We are actively working on enhancing the API and ironing out kinks. If you find a bug or have a feature request, feel free to create an issue or contribute. 🙂
+  <h4>WARNING</h4>: This project is still in beta phase. We are actively working on enhancing the API and ironing out kinks. If you find a bug or have a feature request, feel free to create an issue or contribute. 🙂
 </p>
 
 ## Usage
@@ -59,7 +59,7 @@ This project has taken inspiration from [lowdb](https://github.com/typicode/lowd
 ## Installation
 
 ```ts
-import { CasualDB } from "https://github.com/campvanilla/casualdb/blob/master/mod.ts";
+import { CasualDB } from "/blob/master/mod.ts";
 
 // create an interface to describe the structure of your JSON
 interface Schema {
@@ -82,7 +82,14 @@ const db = new CasualDB<Schema>();
 
 Returns an instance of the _CasualDB_. Passing in a interface describing your JSON data ensures that **type checking works correctly**. The following are the methods available on this class instance
 
-**.connect(pathToJsonFile: string, options?: ConnectOptions)**
+* [.connect()](#casual-db-connect)
+* [.get()](#casual-db-get)
+* [.seed()](#casual-db-seed)
+* [.write()](#casual-db-write)
+
+<h4 id='casual-db-connect'>
+  .connect(pathToJsonFile: string, options?: ConnectOptions)
+</h4>
 
 Creates a _connection_ to a json file passed as parameter. Returns a promise.
 
@@ -100,7 +107,9 @@ await db.connect("./test-db.json", {
 
 ```
 
-**.get<T>(jsonPath: string)**
+<h4 id='casual-db-get'>
+  .get<T>(jsonPath: string)
+</h4>
 
 Fetches value from connected JSON file. Takes an object _path_ as parameter. Returns a `Promise<CollectionOperator | PrimitiveOperator>`.
 **Important**: For type checking to work, ensure that the Template Type <T> is provided to `.get<T>()`. If this is not provided, typescript cannot decide a _CollectionOperator_ or _PrimitiveOperator_ has been returned and hence you'd have to manually narrow it down for TS.
@@ -125,9 +134,11 @@ await db.get<Schema["posts"]>('posts'); // Returns a Promise<CollectionOperator>
 await db.get<Schema["posts"][number]["id"]>('posts.0.id'); // Returns a Promise<PrimitiveOperator>
 ```
 
-**.seed(data: Schema)**
+<h4 id="casual-db-seed">
+  .seed(data: Schema)
+</h4>
 
-Adds / overrides the contents of the connected JSON file. This is beneficial for when you don't already have data in the file or you want to add some defaults. Returns a promise.
+Overrides the contents of the connected JSON file. This is beneficial for when you don't already have data in the file or you want to add some defaults. Returns a promise.
 
 ```ts
 interface Schema {
@@ -150,7 +161,9 @@ await db.seed({
 });
 ```
 
-**.write(jsonPath: string, data: any)**
+<h4 id='casual-db-write'>
+  .write(jsonPath: string, data: any)
+</h4>
 
 Writes the provided value to the Object path provided. Returns a promise.
 
@@ -186,7 +199,15 @@ const data = await db.get<Schema["posts"]>('posts'); // ❌ Not a PrimitiveOpera
 const data = await db.get<Schema["posts"][number]>('posts.0'); // ✅ PrimitiveOperator as the value is a non-array.
 ```
 
-**.value()**
+Instances of this class have the following methods:
+
+* [.value()](#primitive-operator-value)
+* [.update()](#primitive-operator-update)
+* [.pick()](#primitive-operator-pick)
+
+<h4 id='primitive-operator-value'>
+  .value()
+</h4>
 
 Returns the value of the data.
 
@@ -196,7 +217,9 @@ const data = await db.get<Schema["posts"][number]>('posts.0');
 data.value(); // { id: 1, title: "Post 1", views: 99 }
 ```
 
-**.update<T>(updateMethod: (currentValue) => T)**
+<h4 id='primitive-operator-update'>
+  .update<T>(updateMethod: (currentValue) => T)
+</h4>
 
 Method to update the data. Method takes an updater-function as parameter. The updater-function will receive the value you want to update and expects a return value. The type of the updated data is inferred by the ReturnType of the updater-function.
 
@@ -210,7 +233,9 @@ data
   .value(); // { id: 1, title: "Modified Post" }
 ```
 
-**.pick(keys: string[])**
+<h4 id='primitive-operator-pick'>
+  .pick(keys: string[])
+</h4>
 
 Picks and returns a subset of keys from the data. Method allows only keys present on data. If the data is not an object, method returns the data as is.
 
@@ -243,7 +268,17 @@ const data = await db.get<Schema["posts"]>('posts'); // ✅ CollectionOperator a
 const data = await db.get<Schema["posts"][number]>('posts.0'); // ❌ PrimitiveOperator as the value is a non-array.
 ```
 
-**.value()**
+Instances of this class contain the following methods. All methods are chainable:
+
+* [.value()](#collection-operator-value)
+* [.size()](#collection-operator-size)
+* [.findOne()](#collection-operator-findOne)
+* [.findAllAndUpdate()](#collection-operator-findAllAndUpdate)
+* [.findAllAndRemove()](#collection-operator-findAllAndRemove)
+
+<h4 id='collection-operator-value'>
+  .value()
+</h4>
 
 Returns the value of the data.
 
@@ -253,7 +288,9 @@ const data = await db.get<Schema["posts"]>('posts');
 console.log(data.value()); // [ { id: 1, title: "Post 1", views: 99 }, { id: 2, title: "Post 2", views: 30 }, ]
 ```
 
-**.size()**
+<h4 id='collection-operator-size'>
+  .size()
+</h4>
 
 Returns the length of the data.
 
@@ -263,7 +300,9 @@ const data = await db.get<Schema["posts"]>('posts');
 console.log(data.size()); // 2
 ```
 
-**.findOne(predicate: Object | Function => boolean)**
+<h4 id='collection-operator-findOne'><code>
+.findOne(predicate: Object | Function => boolean)
+</code></h4>
 
 Searches array and returns a value if found, else returns `null`. The predicate can be of two forms:
 
@@ -288,7 +327,9 @@ data
   .value(); // { id: 1, title: "Post 1", views: 99 }
 ```
 
-**.push(value)**
+<h4 id='collection-operator-push'><code>
+.push(value)
+</code></h4>
 
 Push a new value into array. Returns a `ColletionOperator` with the updated array.
 
@@ -300,7 +341,9 @@ data
   .value(); // [ { id: 1, title: "Post 1", views: 99 }, { id: 2, title: "Post 2", views: 30 }, { id: 3, title: "Post 3", views: 45 } ]
 ```
 
-**.findAll(predicate: Object | Function => boolean)**
+<h4 id='collection-operator-findAll'><code>
+.findAll(predicate: Object | Function => boolean)
+</code></h4>
 
 Searches an array and return all occurrences that satisfy the predicate. The predicate can be of two forms:
 
@@ -325,7 +368,10 @@ data
   .value(); // [{ id: 1, title: "Post 1", views: 99 },{ id: 3, title: "Post 3", views: 45 }];
 ```
 
-**.findAllAndUpdate(predicate: Object | Function => boolean, updateMethod: (value) => T)**
+<h4 id='collection-operator-findAllAndUpdate'><code>
+.findAllAndUpdate(predicate: Object | Function => boolean, updateMethod: (value) => T)
+</code></h4>
+
 
 Searches an array and updates all occurrences that satisfy the predicate with the return value of the _updateMethod_. The predicate can be of two forms:
 
@@ -351,4 +397,30 @@ data
     title: 'Trending Post'
   }))
   .value(); // [{ id: 1, title: "Trending Post", views: 99 }, { id: 2, title: "Post 2", views: 30 }, { id: 3, title: "Trending Post", views: 45 }];
+```
+
+<h4 id='collection-operator-findAllAndRemove'><code>
+.findAllAndRemove(predicate: Object | Function => boolean, updateMethod: (value) => T)
+</code></h4>
+
+
+Searches an array and **removes** all occurrences that satisfy the predicate. The predicate can be of two forms:
+
+1. An object with keys that you would like to match
+2. A search-function where you can provide your custom logic and return `true` for the condition you are looking for.
+
+Returns a `CollectionOperator` with the updated array.
+
+```ts
+const data = await db.get<Schema["posts"]>('posts');
+
+data
+  .findAllAndRemove({ title: 'Post 1' })
+  .value(); // [{ id: 2, title: "Post 2", views: 30 }, { id: 3, title: "Post 3", views: 45 }]
+
+// or
+
+data
+  .findAllAndRemove((value) => value.views > 40)
+  .value(); // [{ id: 2, title: "Post 2", views: 30 }];
 ```
