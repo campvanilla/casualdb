@@ -7,8 +7,8 @@
 ## Usage
 
 ```ts
-// instantiate with a schema describing the structure of your JSON.
-const db = new CasualDB<{
+// create an interface to describe the structure of your JSON
+interface Schema {
   posts: Array<{
     id: number;
     title: string;
@@ -17,12 +17,12 @@ const db = new CasualDB<{
   user: {
     name: string;
   };
-}>();
+}
 
-// "connect" to the db (JSON file)
-await db.connect("./test-db.json");
+const db = new CasualDB<Schema>(); // instantiate the db, casually 🤓
+await db.connect("./test-db.json"); // "connect" to the db (JSON file)
 
-// seed it with data (optional: if starting with an empty db)
+// (optional) seed it with data, if starting with an empty db
 await db.seed({
   posts: [
     { id: 1, title: "Post 1", views: 99 },
@@ -31,8 +31,12 @@ await db.seed({
   user: { name: "Camp Vanilla" },
 });
 
-db.get('posts')
-  .sort(['views']) // sort by views (ascending)
-  .pick(['title']) // pick the title of every post
-  .value() // => ['Post 2', 'Post 1']
+const posts = await db.get<Schema['posts']>('posts'); // pass the interface key in order for type-checking to work
+
+const postTitlesByViews = (
+  posts
+    .sort(['views']) // sort by views (ascending)
+    .pick(['title']) // pick the title of every post
+    .value() // => ['Post 2', 'Post 1']
+);
 ```
