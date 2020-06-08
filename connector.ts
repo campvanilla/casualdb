@@ -35,6 +35,7 @@ export class Connector<Schema = any> {
   }
 
   async connect(fsPath: string, options?: ConnectOptions): Promise<void> {
+    console.log({ workerPath: this.WRITE_WORKER_PATH, dirname: __dirname });
     try {
       const fileInfo = await Deno.stat(fsPath);
 
@@ -79,7 +80,10 @@ export class Connector<Schema = any> {
         } else if (error) {
           reject(error);
         } else {
-          console.debug("[casualdb:connector:debug]", { returnedTaskId, taskId, error });
+          console.debug(
+            "[casualdb:connector:debug]",
+            { returnedTaskId, taskId, error },
+          );
           reject(new Error(`[casualdb] unknown error while writing to file`));
         }
         if (timeout) {
