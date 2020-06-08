@@ -1,6 +1,8 @@
 import get from "https://deno.land/x/lodash/get.js";
 import set from "https://deno.land/x/lodash/set.js";
 
+import * as worker from './writeWorker.ts';
+
 import { Connector, ConnectOptions } from "./connector.ts";
 import { createNewOperator } from "./operator/utils.ts";
 
