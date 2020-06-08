@@ -1,3 +1,4 @@
+import { dirname, join } from "https://deno.land/std@0.54.0/path/mod.ts"
 import { readJson } from "https://deno.land/std/fs/read_json.ts";
 import { writeJson } from "https://deno.land/std/fs/write_json.ts";
 
@@ -10,7 +11,7 @@ const getNow = Date.now;
 export class Connector<Schema = any> {
   private _filePath: string = "";
   private readonly WRITE_TIMEOUT: number = 10000;
-  private readonly WRITE_WORKER_PATH: string = "./writeWorker.ts";
+  private readonly WRITE_WORKER_PATH: string = join(dirname(import.meta.url), "writeWorker.ts");
   private readonly WRITE_WORKER_OPTIONS: { type: "module"; deno: boolean } = {
     type: "module",
     deno: true,
@@ -76,7 +77,10 @@ export class Connector<Schema = any> {
         } else if (error) {
           reject(error);
         } else {
-          console.debug("[casualdb:connector:debug]", { returnedTaskId, taskId, error });
+          console.debug(
+            "[casualdb:connector:debug]",
+            { returnedTaskId, taskId, error },
+          );
           reject(new Error(`[casualdb] unknown error while writing to file`));
         }
         if (timeout) {
