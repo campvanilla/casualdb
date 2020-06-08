@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "abinavseelan",
+      "name": "Abinav Seelan",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/6417910?v=4",
+      "profile": "https://abinavseelan.com",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "casualdb",
+  "projectOwner": "campvanilla",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
