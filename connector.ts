@@ -8,7 +8,6 @@ export interface ConnectOptions {
 
 const getNow = Date.now;
 
-
 export class Connector<Schema = any> {
   private _filePath: string = "";
   private readonly WRITE_TIMEOUT: number = 10000;
