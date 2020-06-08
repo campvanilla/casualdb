@@ -14,7 +14,8 @@
 
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) <!-- ALL-CONTRIBUTORS-BADGE:END --> ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/campvanilla/casualdb?color=%232ecc71&include_prereleases&style=flat-square)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END --> ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/campvanilla/casualdb?color=%232ecc71&include_prereleases&style=flat-square)
 
 ## Contents
 
@@ -544,7 +545,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://abinavseelan.com"><img src="https://avatars2.githubusercontent.com/u/6417910?v=4" width="100px;" alt=""/><br /><sub><b>Abinav Seelan</b></sub></a><br /><a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Code">💻</a> <a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Documentation">📖</a> <a href="#ideas-abinavseelan" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://abinavseelan.com"><img src="https://avatars2.githubusercontent.com/u/6417910?v=4" width="100px;" alt=""/><br /><sub><b>Abinav Seelan</b></sub></a><br /><a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Code">💻</a> <a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Documentation">📖</a> <a href="#ideas-abinavseelan" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://aditimohanty.com"><img src="https://avatars3.githubusercontent.com/u/6426069?v=4" width="100px;" alt=""/><br /><sub><b>Aditi Mohanty</b></sub></a><br /><a href="https://github.com/campvanilla/casualdb/commits?author=rheaditi" title="Code">💻</a> <a href="https://github.com/campvanilla/casualdb/commits?author=rheaditi" title="Documentation">📖</a> <a href="#ideas-rheaditi" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/campvanilla/casualdb/commits?author=rheaditi" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
