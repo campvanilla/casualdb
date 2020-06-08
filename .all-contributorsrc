@@ -16,6 +16,15 @@
         "ideas",
         "test"
       ]
+    },
+    {
+      "login": "Tezza48",
+      "name": "William Terry",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/12277149?v=4",
+      "profile": "http://www.willterry.me",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
