@@ -1,3 +1,4 @@
+import * as path from "https://deno.land/std@0.51.0/path/mod.ts";
 import { readJson } from "https://deno.land/std/fs/read_json.ts";
 import { writeJson } from "https://deno.land/std/fs/write_json.ts";
 
@@ -7,10 +8,12 @@ export interface ConnectOptions {
 
 const getNow = Date.now;
 
+const __dirname = path.dirname(path.fromFileUrl(import.meta.url));
+
 export class Connector<Schema = any> {
   private _filePath: string = "";
   private readonly WRITE_TIMEOUT: number = 10000;
-  private readonly WRITE_WORKER_PATH: string = "./writeWorker.ts";
+  private readonly WRITE_WORKER_PATH: string = `${__dirname}/writeWorker.ts`;
   private readonly WRITE_WORKER_OPTIONS: { type: "module"; deno: boolean } = {
     type: "module",
     deno: true,
