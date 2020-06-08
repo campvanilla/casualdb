@@ -8,12 +8,11 @@ export interface ConnectOptions {
 
 const getNow = Date.now;
 
-const __dirname = path.dirname(path.fromFileUrl(import.meta.url));
 
 export class Connector<Schema = any> {
   private _filePath: string = "";
   private readonly WRITE_TIMEOUT: number = 10000;
-  private readonly WRITE_WORKER_PATH: string = `${__dirname}/writeWorker.ts`;
+  private readonly WRITE_WORKER_PATH: string = new URL('./writeWorker.ts', import.meta.url).href;
   private readonly WRITE_WORKER_OPTIONS: { type: "module"; deno: boolean } = {
     type: "module",
     deno: true,
@@ -35,7 +34,7 @@ export class Connector<Schema = any> {
   }
 
   async connect(fsPath: string, options?: ConnectOptions): Promise<void> {
-    console.log({ workerPath: this.WRITE_WORKER_PATH, dirname: __dirname });
+    console.log({ workerPath: this.WRITE_WORKER_PATH, metaurl: import.meta.url });
     try {
       const fileInfo = await Deno.stat(fsPath);
 
