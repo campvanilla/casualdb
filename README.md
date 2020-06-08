@@ -61,7 +61,7 @@ const postTitlesByViews = (
 ## Installation
 
 ``` ts
-import { CasualDB } from "https://deno.land/x/casualdb@0.1.0/mod.ts";
+import { CasualDB } from "https://deno.land/x/casualdb@0.1.1/mod.ts";
 
 // create an interface to describe the structure of your JSON
 interface Schema {
@@ -83,7 +83,7 @@ Note: When running via deno, this module will require you to pass the following 
 * `--allow-read` : in order to be able to **read** the JSON files
 * `--allow-write`: in order to be able to **write** to the JSON files
 * `--unstable`   : this module uses the experimental Worker API in deno, and hence requires this flag
-* `--allow-net`   : this is to enable to download of the Worker file.
+* `--allow-net`  : this is to enable to download of the Worker file.
 
 If you want to always run the latest code (from the `master` branch) of this module, install via:
 ```ts
