@@ -12,10 +12,9 @@
   <strong>WARNING</strong>: This project is still in beta phase. We are actively working on enhancing the API and ironing out kinks. If you find a bug or have a feature request, feel free to create an issue or contribute. 🙂
 </p>
 
-
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/campvanilla/casualdb?color=%232ecc71&include_prereleases&style=flat-square) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END --> ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/campvanilla/casualdb?color=%232ecc71&include_prereleases&style=flat-square)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Contents
 
