@@ -33,7 +33,6 @@ export class Connector<Schema = any> {
   }
 
   async connect(fsPath: string, options?: ConnectOptions): Promise<void> {
-    console.log({ workerPath: this.WRITE_WORKER_PATH, metaurl: import.meta.url });
     try {
       const fileInfo = await Deno.stat(fsPath);
 
