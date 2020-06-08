@@ -14,7 +14,8 @@
 
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) <!-- ALL-CONTRIBUTORS-BADGE:END --> ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/campvanilla/casualdb?color=%232ecc71&include_prereleases&style=flat-square)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END --> ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/campvanilla/casualdb?color=%232ecc71&include_prereleases&style=flat-square)
 
 ## Contents
 
@@ -544,7 +545,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://abinavseelan.com"><img src="https://avatars2.githubusercontent.com/u/6417910?v=4" width="100px;" alt=""/><br /><sub><b>Abinav Seelan</b></sub></a><br /><a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Code">💻</a> <a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Documentation">📖</a> <a href="#ideas-abinavseelan" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://abinavseelan.com"><img src="https://avatars2.githubusercontent.com/u/6417910?v=4" width="100px;" alt=""/><br /><sub><b>Abinav Seelan</b></sub></a><br /><a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Code">💻</a> <a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Documentation">📖</a> <a href="#ideas-abinavseelan" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/campvanilla/casualdb/commits?author=abinavseelan" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://www.willterry.me"><img src="https://avatars0.githubusercontent.com/u/12277149?v=4" width="100px;" alt=""/><br /><sub><b>William Terry</b></sub></a><br /><a href="https://github.com/campvanilla/casualdb/issues?q=author%3ATezza48" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
