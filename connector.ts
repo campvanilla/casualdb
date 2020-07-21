@@ -1,4 +1,4 @@
-import { dirname, join } from "https://deno.land/std@0.54.0/path/mod.ts"
+import { dirname, join } from "https://deno.land/std/path/mod.ts"
 import { readJson } from "https://deno.land/std/fs/read_json.ts";
 import { writeJson } from "https://deno.land/std/fs/write_json.ts";
 
