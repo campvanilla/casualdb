@@ -37,6 +37,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "kebot",
+      "name": "Keith Yao",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/289392?v=4",
+      "profile": "http://yaofur.com/",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
