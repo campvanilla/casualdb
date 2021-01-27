@@ -1,5 +1,5 @@
 import { CasualDB } from "../mod.ts";
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.84.0/testing/asserts.ts";
 
 import { blog, Blog } from "../data/blog.ts";
 

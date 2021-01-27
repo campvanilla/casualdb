@@ -1,4 +1,4 @@
-import { writeJson } from "https://deno.land/std/fs/write_json.ts";
+import { writeJson } from "https://deno.land/std@0.68.0/fs/write_json.ts";
 
 self.onmessage = async (e) => {
   const { file, data, taskId } = e.data;

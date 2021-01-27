@@ -1,4 +1,4 @@
-import matches from "https://deno.land/x/lodash/matches.js";
+import matches from "https://deno.land/x/lodash@4.17.15-es/matches.js";
 
 import { BaseOperator } from "./base.ts";
 import { SortArg, Predicate } from "./types.ts";
