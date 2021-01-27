@@ -1,6 +1,6 @@
-import { dirname, join } from "https://deno.land/std/path/mod.ts"
-import { readJson } from "https://deno.land/std/fs/read_json.ts";
-import { writeJson } from "https://deno.land/std/fs/write_json.ts";
+import { dirname, join } from "https://deno.land/std@0.84.0/path/mod.ts"
+import { readJson } from "https://deno.land/std@0.68.0/fs/read_json.ts";
+import { writeJson } from "https://deno.land/std@0.68.0/fs/write_json.ts";
 
 export interface ConnectOptions {
   bailIfNotPresent?: boolean;

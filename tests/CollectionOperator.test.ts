@@ -5,7 +5,7 @@ import {
 import {
   assertEquals,
   assertNotEquals,
-} from "https://deno.land/std/testing/asserts.ts";
+} from "https://deno.land/std@0.84.0/testing/asserts.ts";
 
 import { Pokemon, pokemon } from "../data/pokemon.ts";
 

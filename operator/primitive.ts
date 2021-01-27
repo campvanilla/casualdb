@@ -1,5 +1,5 @@
 import { BaseOperator } from "./base.ts";
-import pick from "https://deno.land/x/lodash/pick.js";
+import pick from "https://deno.land/x/lodash@4.17.15-es/pick.js";
 
 export class PrimitiveOperator<Op> extends BaseOperator<Op> {
   constructor(data: Op) {

@@ -1,5 +1,5 @@
-import get from "https://deno.land/x/lodash/get.js";
-import set from "https://deno.land/x/lodash/set.js";
+import get from "https://deno.land/x/lodash@4.17.15-es/get.js";
+import set from "https://deno.land/x/lodash@4.17.15-es/set.js";
 
 import { Connector, ConnectOptions } from "./connector.ts";
 import { createNewOperator } from "./operator/utils.ts";
