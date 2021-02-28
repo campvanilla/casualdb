@@ -9,7 +9,7 @@ export interface ConnectOptions {
 const getNow = Date.now;
 
 export class Connector<Schema = any> {
-  private _filePath: string = "";
+  private _filePath = "";
   private readonly WRITE_TIMEOUT: number = 10000;
   private readonly WRITE_WORKER_PATH: string = join(dirname(import.meta.url), "writeWorker.ts");
   private readonly WRITE_WORKER_OPTIONS: { type: "module"; deno: boolean } = {
@@ -27,7 +27,7 @@ export class Connector<Schema = any> {
     return `casualdb:connector:${getNow()}`;
   }
 
-  async read() {
+  read() {
     this._checkConnection();
     return readJson(this._filePath) as Promise<Schema>;
   }
@@ -73,7 +73,7 @@ export class Connector<Schema = any> {
           returnedTaskId && returnedTaskId.toString() === taskId &&
           error === false
         ) {
-          resolve();
+          resolve(undefined);
         } else if (error) {
           reject(error);
         } else {

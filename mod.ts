@@ -11,7 +11,7 @@ class CasualDB<Schema> {
     this._connector = new Connector();
   }
 
-  async connect(fsPath: string, options?: ConnectOptions) {
+  connect(fsPath: string, options?: ConnectOptions): Promise<unknown> {
     return this._connector.connect(fsPath, options);
   }
 
@@ -22,14 +22,14 @@ class CasualDB<Schema> {
     return createNewOperator<T>(value);
   }
 
-  async seed(data: Schema) {
+  seed(data: Schema): Promise<unknown> {
     return this._connector.write(data);
   }
 
   async write<T>(path: string, value: T) {
     const data = await this._connector.read();
     const updatedData = set(data, path, value);
-    return this._connector.write(updatedData);
+    return this._connector.write(updatedData as Schema);
   }
 }
 
