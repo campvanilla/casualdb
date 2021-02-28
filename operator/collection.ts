@@ -49,7 +49,7 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
     const predicateFunction = typeof predicate === "function"
       ? predicate
       : matches(predicate);
-    const filtered = this.data.filter(predicateFunction);
+    const filtered = this.data.filter((value) => predicateFunction(value));
     return new CollectionOperator(filtered);
   }
 
@@ -77,7 +77,7 @@ export class CollectionOperator<Op> extends BaseOperator<Op[]> {
       ? predicate
       : matches(predicate);
     return new CollectionOperator(
-      this.data.filter((value: Op) => !predicateFunction(value)),
+      this.data.filter((value) => !predicateFunction(value)),
     );
   }
 
