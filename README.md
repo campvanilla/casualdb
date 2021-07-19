@@ -65,7 +65,7 @@ const postTitlesByViews = (
 ## Installation
 
 ``` ts
-import { CasualDB } from "https://deno.land/x/casualdb@0.1.4/mod.ts";
+import { CasualDB } from "https://deno.land/x/casualdb@v0.1.4/mod.ts";
 
 // create an interface to describe the structure of your JSON
 interface Schema {
